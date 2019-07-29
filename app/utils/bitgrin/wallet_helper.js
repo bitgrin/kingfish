@@ -1,16 +1,77 @@
 import bitgrin from '../bitgrin';
 import fs from 'fs';
 import path from 'path';
-const crypto = require('crypto');
 const {spawn} = require('child_process');
 
-const ENCRYPTION_KEY = 'AFg25*n7qzt0UzkN#yNIeSLwDc@JW0X1'; //process.env.ENCRYPTION_KEY; // Must be 256 bytes (32 characters)
-const IV_LENGTH = 16; // For AES, this is always 16
+let is_prompting_for_password = false;
+let _wallet_password;
+let password_handlers = [];
 
 const wallet_helper = {
     writing_down_recovery_phrase: false,
+    set_pass: (t_pass) => {
+        _wallet_password = t_pass;
+        for(let h_idx=0; h_idx<password_handlers.length; h_idx++) {
+            let handler = password_handlers[h_idx];
+            handler(_wallet_password);
+        }
+        is_prompting_for_password = false;
+        bitgrin.set_readiness(bitgrin.READY_LEVELS.READY);
+    },
+    wallet_pass: async () => {
+        if(typeof(_wallet_password) != 'undefined') {
+            return new Promise((resolve) => {
+                resolve(_wallet_password);
+            });
+        }
+        if(is_prompting_for_password) {
+            // Already was prompting, wait for the existing prompt to finish
+            bitgrin.set_readiness(bitgrin.READY_LEVELS.AWAITING_PASSWORD);
+            return new Promise((resolve, reject) => {
+                let handler = (pass) => {
+                    if(typeof(pass) != 'undefined') {
+                        resolve(pass);
+                    }
+                    else {
+                        reject("No password supplied");
+                    }
+                }
+                password_handlers.push(handler);
+            });
+        }
+        is_prompting_for_password = true;
+        
+            // Listen for password to be provided
+            // window.password_listener = await async ((r_pass) => {
+            // });
+            // return new Promise((resolve, reject) => {
+            /*prompt({
+                title: 'Wallet Password Required',
+                label: 'Password:',
+                value: '',
+                inputAttrs: {
+                    type: 'password'
+                }
+            })
+            .then((r) => {
+                if(r === null) {
+                    console.log('user cancelled');
+                } else {
+                    _wallet_password = r;
+                }
+                for(let h_idx=0; h_idx<password_handlers.length; h_idx++) {
+                    let handler = password_handlers[h_idx];
+                    handler(_wallet_password);
+                }
+                is_prompting_for_password = false;
+            })
+            .catch((e) => {
+                console.log(e);
+                reject("Error occurred retreiving password from prompt.");
+            });*/
+    },
     wallet_ready: () => {
-        return !wallet_helper.writing_down_recovery_phrase && wallet_helper.wallet_seed_file_exists() && wallet_helper.wallet_password_redux_stored();
+        return !wallet_helper.writing_down_recovery_phrase && wallet_helper.wallet_seed_file_exists();
     },
     get_wallet_seed_path: () => {
         let wallet_cfg = bitgrin.get_wallet_config_sync();
@@ -28,34 +89,8 @@ const wallet_helper = {
     get_wallet_seed_path: () => {
         return path.join(bitgrin.bitgrin_main_path(), 'bg_wallet_data/wallet.seed');
     },
-    wallet_password_redux_stored: () => {
-        const state = bitgrin.get_store().getState();
-        return (typeof(state.settings.walletPassword) != 'undefined');
-    },
-    wallet_pass: () => {
-        const state = bitgrin.get_store().getState();
-        return wallet_helper.decrypt_str(state.settings.walletPassword);
-    },
     wallet_seed_file_exists: () => {
         return fs.existsSync(wallet_helper.get_wallet_seed_path());
-    },
-    encrypt_str: (text) => {
-        let iv = crypto.randomBytes(IV_LENGTH);
-        let cipher = crypto.createCipheriv('aes-256-cbc', Buffer.from(ENCRYPTION_KEY), iv);
-        let encrypted = cipher.update(text);
-        encrypted = Buffer.concat([encrypted, cipher.final()]);
-        return iv.toString('hex') + ':' + encrypted.toString('hex');
-    },
-    decrypt_str: (text) => {
-        let textParts = text.split(':');
-        let iv = Buffer.from(textParts.shift(), 'hex');
-        let encryptedText = Buffer.from(textParts.join(':'), 'hex');
-        let decipher = crypto.createDecipheriv('aes-256-cbc', Buffer.from(ENCRYPTION_KEY), iv);
-        let decrypted = decipher.update(encryptedText);
-        
-        decrypted = Buffer.concat([decrypted, decipher.final()]);
-        
-        return decrypted.toString();
     },
     recover_wallet: (phrase, pass, cb) => {
         // bitgrin.exe wallet recover --phrase="word list here"
@@ -113,26 +148,6 @@ const wallet_helper = {
             if(code != 0) {
                 console.log(cb);
                 cb(undefined, `Exited with code ${code}`);
-            }
-        });
-    },
-    validate_seed_password: (pass, cb) => {
-        // bitgrin wallet account
-        let info_str = `${bitgrin.bg_wallet_bin_path} -p="${pass}" account`;
-        let child_process = spawn(info_str, {shell: true});
-        child_process.stdout.on('data', function (data) {
-            console.log(data.toString());
-        });
-        child_process.stderr.on('data', function (data) {
-            console.log(data.toString());
-        });
-        child_process.on('exit', function (code) {
-            console.log(`EXIT WITH CODE: ${code}`);
-            if(code == 0) {
-                cb(true);
-            }
-            else {
-                cb(false);
             }
         });
     },

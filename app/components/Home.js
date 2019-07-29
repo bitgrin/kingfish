@@ -4,6 +4,7 @@ import routes from '../constants/routes';
 import styles from './Home.scss';
 import bs from './bootstrap/css/bootstrap.min.css';
 import Dashboard from './Dashboard';
+import DashboardDetailed from './DashboardDetailed';
 import Send from './Send';
 import Receive from './Receive';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
@@ -15,6 +16,7 @@ import receiveHelper from '../utils/bitgrin/receiveHelper';
 import { connect } from 'react-redux';
 import InitializeWallet from './InitializeWallet';
 import Mine from './Mine';
+import WalletEncrypted from './WalletEncrypted';
 import bitgrin from '../utils/bitgrin';
 
 type Props = {};
@@ -111,6 +113,9 @@ class Home extends Component<Props> {
 
     if(!bitgrin.wallet_helper.wallet_ready()) {
       home = <InitializeWallet />;
+    }
+    if(bitgrin.readiness == bitgrin.READY_LEVELS.AWAITING_PASSWORD) {
+      return <WalletEncrypted />;
     }
     return home;
   }

@@ -103,7 +103,8 @@ const READY_LEVELS = {
     CREATING_WALLET: 'CREATING_WALLET',
     NONE: 'NONE',
     SHUTTING_DOWN: 'SHUTTING_DOWN',
-    SHUTDOWN: 'SHUTDOWN'
+    SHUTDOWN: 'SHUTDOWN',
+    AWAITING_PASSWORD: 'AWAITING_PASSWORD'
 };
 // Returns true if process is ended and null
 const end_process = (child, title="None") => {
@@ -152,7 +153,7 @@ const bitgrin = {
         if(bitgrin.readiness == bitgrin.READY_LEVELS.SHUTDOWN || bitgrin.readiness == bitgrin.READY_LEVELS.SHUTTING_DOWN) {
             return;
         }
-        con.log('bitgrin.bootstrap()');
+        console.log('bitgrin.bootstrap()');
         if(bitgrin.readiness != bitgrin.READY_LEVELS.READY) {
             console.log(`BitGrin not ready for bootstrap... ${bitgrin._readiness}`);
         }
@@ -175,25 +176,41 @@ const bitgrin = {
         }
         if(!wallet_helper.wallet_ready()) {
             bitgrin.set_readiness(bitgrin.READY_LEVELS.CREATING_WALLET);
-            // Sleep 1000ms and try again
-            setTimeout(bitgrin.bootstrap.bind(this), 3000);
-            // bitgrin.bootstrap();
+            // Sleep 2000ms and try again
+            setTimeout(bitgrin.bootstrap.bind(this), 2000);
             return;
         }
         if(bitgrin.readiness == bitgrin.SHUTTING_DOWN || bitgrin.readiness == bitgrin.SHUTDOWN) {
             return;
         }
         bitgrin.set_readiness(bitgrin.READY_LEVELS.READY);
-        // Start bitgrin server in the background
+
+        console.log('bitgrin.bootstrap()6');
+        console.log("Ready!");
+
+        // Start the update loop
+        bitgrin.tick();
+        /*// Start bitgrin server in the background
         bitgrin.bitgrin_server_process();
         // Start bitgrin wallet in the background
         bitgrin.bitgrin_wallet_listen_process();
         // Start bitgrin wallet owner_api in the background
-        bitgrin.bitgrin_wallet_owner_api_process();
+        bitgrin.bitgrin_wallet_owner_api_process();*/
+    },
+    tick: () => {
+        console.log('tick');
+        // Keep processes alive and password correct update loop
+        if(_bitgrin_wallet_process == null) {
+            bitgrin.bitgrin_wallet_listen_process();
+        }
+        if(_bitgrin_server_process == null) {
+            bitgrin.bitgrin_server_process();
+        }
+        if(_bitgrin_wallet_owner_api_process == null) {
+            bitgrin.bitgrin_wallet_owner_api_process();
+        }
 
-        setTimeout(() => {
-            // TODO: Perform sanity check that everything booted after a moment and notify user of any potential issues
-        }, 1500);
+        setTimeout(bitgrin.tick.bind(this), 2000);
     },
     set_store: (_store) => {
         store = _store;
@@ -222,12 +239,12 @@ const bitgrin = {
             "params": ${JSON.stringify(params)},
             "id": 1
         }`;
-        bitgrin.get_api_secret((password) => {
+        bitgrin.get_api_secret((api_key) => {
             fetch(`${owner_api_base}/v2/owner`, {
                 method: 'post',
                 body: body,
                 headers: new Headers({
-                    "Authorization": `Basic ${base64.encode(`grin:${password}`)}`
+                    "Authorization": `Basic ${base64.encode(`grin:${api_key}`)}`
                 }),
             }).then(response => {
                 if (!response.ok) throw new Error(response.status);
@@ -261,11 +278,12 @@ const bitgrin = {
             })
         });
     },
-    run_wallet_check: (callback, log_callback) => {
+    run_wallet_check: async (callback, log_callback) => {
         if(bitgrin.readiness == bitgrin.READY_LEVELS.SHUTDOWN || bitgrin.readiness == bitgrin.READY_LEVELS.SHUTTING_DOWN) {
             return;
         }
-        let cmds = `${bg_wallet_bin_path} -p="${wallet_helper.wallet_pass()}" check`;
+        let m_pass = await wallet_helper.wallet_pass();
+        let cmds = `${bg_wallet_bin_path} -p="${m_pass}" check`;
         let child_process = spawn(cmds, {shell: true});
         
         child_process.stdout.on('data', function (data) {
@@ -299,12 +317,13 @@ const bitgrin = {
             });
         });
     },
-    perform_tx_finalize: (slate_path, log_callback, process_ended_cb) => {
+    perform_tx_finalize: async (slate_path, log_callback, process_ended_cb) => {
         if(bitgrin.readiness == bitgrin.READY_LEVELS.SHUTDOWN || bitgrin.readiness == bitgrin.READY_LEVELS.SHUTTING_DOWN) {
             return;
         }
         //grin wallet finalize -i any_transaction_name.tx.response
-        let finalize_string = `${bg_wallet_bin_path} -p="${wallet_helper.wallet_pass()}" finalize -i "${slate_path}"`;
+        let m_pass = await wallet_helper.wallet_pass();
+        let finalize_string = `${bg_wallet_bin_path} -p="${m_pass}" finalize -i "${slate_path}"`;
         let child_process = spawn(finalize_string, {shell: true});
         child_process.stdout.on('data', function (data) {
             console.log(data.toString());
@@ -346,12 +365,13 @@ const bitgrin = {
             }
         });
     },
-    perform_file_send: (amount, path, log_callback, process_ended_cb) => {
+    perform_file_send: async (amount, path, log_callback, process_ended_cb) => {
         if(bitgrin.readiness == bitgrin.READY_LEVELS.SHUTDOWN || bitgrin.readiness == bitgrin.READY_LEVELS.SHUTTING_DOWN) {
             return;
         }
         //grin wallet send -m file -d my_grin_transaction.tx 10.25
-        let send_str = `${bg_wallet_bin_path} -p="${wallet_helper.wallet_pass()}" send -m file -d "${path}" ${amount}`;
+        let m_pass = await wallet_helper.wallet_pass();
+        let send_str = `${bg_wallet_bin_path} -p="${m_pass}" send -m file -d "${path}" ${amount}`;
         console.log(send_str);
         let child_process = spawn(send_str, {shell: true});
         child_process.stdout.on('data', function (data) {
@@ -367,12 +387,13 @@ const bitgrin = {
             process_ended_cb(code);
         });
     },
-    perform_file_receive: (slate_path, log_callback, process_ended_cb) => {
+    perform_file_receive: async (slate_path, log_callback, process_ended_cb) => {
         if(bitgrin.readiness == bitgrin.READY_LEVELS.SHUTDOWN || bitgrin.readiness == bitgrin.READY_LEVELS.SHUTTING_DOWN) {
             return;
         }
         //grin wallet receive -i any_transaction_name.tx
-        let receive_str = `${bg_wallet_bin_path} -p="${wallet_helper.wallet_pass()}" receive -i "${slate_path}"`;
+        let m_pass = await wallet_helper.wallet_pass();
+        let receive_str = `${bg_wallet_bin_path} -p="${m_pass}" receive -i "${slate_path}"`;
         let child_process = spawn(receive_str, {shell: true});
         child_process.stdout.on('data', function (data) {
             console.log(data.toString());
@@ -387,11 +408,12 @@ const bitgrin = {
             process_ended_cb(code);
         });
     },
-    initiate_http_send: (dest, amount, callback) => {
+    initiate_http_send: async (dest, amount, callback) => {
         if(bitgrin.readiness == bitgrin.READY_LEVELS.SHUTDOWN || bitgrin.readiness == bitgrin.READY_LEVELS.SHUTTING_DOWN) {
             return;
         }
-        let send_str = `${bg_wallet_bin_path} -p="${wallet_helper.wallet_pass()}" send -d "${dest}" ${amount}`;
+        let m_pass = await wallet_helper.wallet_pass();
+        let send_str = `${bg_wallet_bin_path} -p="${m_pass}" send -d "${dest}" ${amount}`;
         let child_process = spawn(send_str, {shell: true});
         child_process.stdout.on('data', function (data) {
             console.log(data.toString());
@@ -405,15 +427,14 @@ const bitgrin = {
             console.log(`EXIT WITH CODE: ${code}`);
         });
     },
-    bitgrin_wallet_owner_api_process: () => {
+    bitgrin_wallet_owner_api_process: async () => {
         if(bitgrin.readiness == bitgrin.READY_LEVELS.SHUTDOWN || bitgrin.readiness == bitgrin.READY_LEVELS.SHUTTING_DOWN) {
             return;
         }
         console.log('start bitgrin_wallet_owner_api_process');
         if(typeof(_bitgrin_wallet_owner_api_process == 'undefined')) {
-            let owner_api_str = `${bg_wallet_bin_path} -p="${wallet_helper.wallet_pass()}" owner_api`;
-            // let child_process = spawn(owner_api_str, {shell: true});
-            let child_process = spawn(bg_wallet_bin_path_noshell, [`-p=${wallet_helper.wallet_pass()}`, 'owner_api']);
+            let m_pass = await wallet_helper.wallet_pass();
+            let child_process = spawn(bg_wallet_bin_path_noshell, [`-p=${m_pass}`, 'owner_api']);
 
             _bitgrin_wallet_owner_api_process = child_process;
 
@@ -427,6 +448,7 @@ const bitgrin = {
             
             child_process.on('exit', function (code) {
                 // Try to restart it
+                _bitgrin_wallet_owner_api_process = null;
                 console.log(`wallet owner_api exit ${code}`);
                 setTimeout(2000, () => {
                     bitgrin.bitgrin_wallet_owner_api_process();
@@ -434,17 +456,15 @@ const bitgrin = {
             });
         }
     },
-    bitgrin_wallet_listen_process: () => {
+    bitgrin_wallet_listen_process: async () => {
         if(bitgrin.readiness == bitgrin.READY_LEVELS.SHUTDOWN || bitgrin.readiness == bitgrin.READY_LEVELS.SHUTTING_DOWN) {
             return;
         }
         bitgrin.testUpnpn();
         if(typeof(_bitgrin_wallet_process == 'undefined')) {
-            // let cmds = `${bg_bin_path} wallet -p="${wallet_helper.wallet_pass()}" -e listen"`;
-            // let child_process = spawn(cmds, {shell: true});
 
-            
-            let child_process = spawn(bg_wallet_bin_path_noshell, [`-p=${wallet_helper.wallet_pass()}`, '-e', 'listen']);
+            let m_pass = await wallet_helper.wallet_pass();
+            let child_process = spawn(bg_wallet_bin_path_noshell, [`-p=${m_pass}`, '-e', 'listen']);
 
             _bitgrin_wallet_process = child_process;
             

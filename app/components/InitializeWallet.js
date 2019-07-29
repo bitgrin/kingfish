@@ -8,7 +8,6 @@ import * as SettingsActions from '../actions/settings';
 import {Form, Button, FormGroup, FormControl, HelpBlock, ControlLabel, FormLabel} from 'react-bootstrap';
 import CreateWallet from './CreateWallet';
 import RecoverWallet from './RecoverWallet';
-import AuthenticateWallet from './AuthenticateWallet';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import bitgrin from '../utils/bitgrin';
 const wallet = bitgrin.wallet_helper;
@@ -19,30 +18,10 @@ class InitializeWallet extends Component<Props> {
         this.state = {tabIndex: -1, lost_seed_file: false}
     }
     componentDidMount() {
-        if(wallet.wallet_password_redux_stored() && !wallet.wallet_seed_file_exists()) {
-            // Once created a wallet, but the seed file was removed
-            this.setState({
-                ...this.state,
-                tabIndex: 1,
-                lost_seed_file: true
-            })
-            return;
-        }
-        if(wallet.wallet_seed_file_exists()) {
-            // There is a wallet, but no password saved
-            this.setState({
-                ...this.state,
-                tabIndex: 2
-            })
-            return;
-        }
-        if(!wallet.wallet_password_redux_stored() && !wallet.wallet_seed_file_exists()) {
-            // New user
-            this.setState({
-                ...this.state,
-                tabIndex: 0
-            })
-        }
+        this.setState({
+            ...this.state,
+            tabIndex: 0
+        });
     }
   onSelectTab(t) {
     this.setState({...this.state, tabIndex: t})
@@ -55,7 +34,6 @@ class InitializeWallet extends Component<Props> {
                     <TabList>
                     <Tab>CREATE</Tab>
                     <Tab>RECOVER</Tab>
-                    {!wallet.wallet_seed_file_exists() ? '' :<Tab>AUTHENTICATE</Tab>}
                     </TabList>
                     <TabPanel>
                         <CreateWallet />
@@ -63,9 +41,6 @@ class InitializeWallet extends Component<Props> {
                     <TabPanel>
                         <RecoverWallet lost_seed_file={this.state.lost_seed_file} />
                     </TabPanel>
-                    {!wallet.wallet_seed_file_exists() ? '' :<TabPanel>
-                        <AuthenticateWallet />
-                    </TabPanel>}
                 </Tabs>
             </div>
         </div>
@@ -74,7 +49,8 @@ class InitializeWallet extends Component<Props> {
 }
 
 function mapStateToProps(state) {
-    return state;
+    return st
+    ate;
 }
 
 function mapDispatchToProps(dispatch) {

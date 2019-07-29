@@ -115,7 +115,6 @@ class CreateWallet extends Component<Props> {
             this.state.confirm_word_15.toLowerCase().trim() == ws[14] &&
             this.state.confirm_word_23.toLowerCase().trim() == ws[22]
         ) {
-            this.props.setWalletPassword(wallet.encrypt_str(this.state.pass));
             bitgrin.wallet_helper.writing_down_recovery_phrase = false;
             this.setState({
                 ...this.state,
