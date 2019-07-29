@@ -55,7 +55,14 @@ class Dashboard extends Component<Props> {
         }
         else {
             let per_synced = Math.floor((local_height / seed_height) * 100);
-            friendly_height = `${per_synced}% - Block ${local_height} / ${seed_height}`;
+            if(per_synced == 'Infinity') {
+                // Seed height erroring here on Mac OS. Temporary work-around.
+                friendly_height = `Fully synced  -  Height: ${local_height}`;
+                synchronized = true;
+            }
+            else {
+                friendly_height = `${per_synced}% - Block ${local_height} / ${seed_height}`;
+            }
         }
     }
     let balance_container_markup = (
