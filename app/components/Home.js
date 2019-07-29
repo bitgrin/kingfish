@@ -62,7 +62,6 @@ class Home extends Component<Props> {
   //   console.log('onDropCapture');
   // }
   render() {
-    let sendTagDisabled = false;// !this.props.chain.synchronized;
     let containerClasses = 'container';
     let titlebarDragger = '';
     if(process.platform.includes('darwin')) {
@@ -76,19 +75,23 @@ class Home extends Component<Props> {
       <div className={containerClasses} data-tid="container">
         {titlebarDragger}
         <div>
-            <div className='vnum'>v1.1.0</div>
+            <div className='vnum'>v1.1.2</div>
             <div id='topBar'>
                 {/* <img className='logo' src="bird300.png" width="64" />
                 <h3>Kingfish</h3> */}
                 <Tabs onSelect={this.onSelectTab.bind(this)} selectedIndex={this.state.tabIndex}>
                   <TabList>
                     <Tab>BALANCE</Tab>
-                    <Tab disabled={sendTagDisabled}>SEND</Tab>
+                    <Tab>DETAIL</Tab>
+                    <Tab>SEND</Tab>
                     <Tab>RECEIVE</Tab>
                     <Tab>MINE</Tab>
                   </TabList>
                   <TabPanel>
                     <Dashboard />
+                  </TabPanel>
+                  <TabPanel>
+                    <DashboardDetailed />
                   </TabPanel>
                   <TabPanel>
                     <Send />

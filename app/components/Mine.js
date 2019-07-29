@@ -12,8 +12,8 @@ class Mine extends Component<Props> {
     constructor() {
         super();
         this.state = {
-            endpoint: `https://api.pool.bitgrin.io/pool/payment/get_tx_slate/`,
-            user_id_endpoint: `https://api.pool.bitgrin.io/pool/users`,
+            endpoint: `https://api.pool.bitgrin.dev/pool/payment/get_tx_slate/`,
+            user_id_endpoint: `https://api.pool.bitgrin.dev/pool/users`,
             logs: ''
         };
     }
@@ -70,10 +70,10 @@ class Mine extends Component<Props> {
                 <p>Mining pool payouts can be requested here</p>
                 
                 {/* <ControlLabel>Payment Request Endpoint</ControlLabel>
-                <FormControl onChange={this.setPoolEndpoint.bind(this)} type="text" label="Text" placeholder="https://api.pool.bitgrin.io/pool/users"  defaultValue={this.state.user_id_endpoint} /> */}
+                <FormControl onChange={this.setPoolEndpoint.bind(this)} type="text" label="Text" placeholder="https://api.pool.bitgrin.dev/pool/users"  defaultValue={this.state.user_id_endpoint} /> */}
                 <br />
                 <div className='left'>
-                    <h4>Request from: <span className='orange'>pool.bitgrin.io</span></h4>
+                    <h4>Request from: <span className='orange'>pool.bitgrin.dev</span></h4>
                 </div>
                 <ControlLabel>Pool Login</ControlLabel>
                 <FormControl onChange={this.setLogin.bind(this)} type="text" label="Text" placeholder="user@example.com" />

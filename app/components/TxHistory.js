@@ -50,12 +50,10 @@ class TxHistory extends Component<Props> {
         }
         return (
             <div key={tx.tx_slate_id}>
-                <h4>Transaction ID</h4>
+                <h4>Transaction ID (<span className='orange'>{confirmedTxt}</span>)</h4>
                 <h4 className='txidtext' onClick={() => {this.copy(tx.tx_slate_id)}}>{tx.tx_slate_id}</h4>
-                <div>
-                    <p>{txSendLabel} {delta} <span className='orange'>{confirmedTxt}</span><p className="small">{friendly_date}</p></p>
-                </div>
-                <br />
+                <h4>{txSendLabel} {delta} {friendly_date}</h4>
+                <hr />
             </div>
         )
     });

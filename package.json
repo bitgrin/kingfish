@@ -1,7 +1,7 @@
 {
   "name": "kingfish",
   "productName": "Kingfish",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Cross-platform user friendly Wallet for BitGrin and Grin ",
   "scripts": {
     "build": "concurrently \"yarn build-main\" \"yarn build-renderer\"",
@@ -128,7 +128,7 @@
   "author": {
     "name": "BitGrin Team",
     "email": "bitgrin@protonmail.com",
-    "url": "https://bitgrin.io"
+    "url": "https://bitgrin.dev"
   },
   "contributors": [
     {
@@ -151,7 +151,7 @@
     "XBG",
     "miner"
   ],
-  "homepage": "https://bitgrin.io",
+  "homepage": "https://bitgrin.dev",
   "jest": {
     "testURL": "http://localhost/",
     "moduleNameMapper": {
@@ -278,6 +278,7 @@
     "history": "^4.7.2",
     "is-port-reachable": "^2.0.0",
     "nat-upnp": "^1.1.1",
+    "open": "^6.4.0",
     "public-ip": "^3.0.0",
     "react": "^16.7.0",
     "react-anime": "^2.2.0",

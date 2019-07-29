@@ -85,7 +85,7 @@ class Chain extends Component<Props> {
         let height_delta = Math.abs(seed_height - output_height);
         if(height_delta < 60) {
           // Output occured within last hour, notify the user
-          let amt = bitgrin.to_xbg(outputs[outputs.length-1][0].value);
+          let amt = bitgrin.to_xbg(outputs[outputs.length-1].output.value);
           toast.info(`Incoming Payment: ${amt} XBG`, {autoClose: 4000});
         }
       }

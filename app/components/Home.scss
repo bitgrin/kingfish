@@ -60,18 +60,29 @@ $seed-word-digit: rgb(161, 148, 120);
 }
 
 
+// Detailed history
+.balanceContainerDetail {
+  text-align: left;
+  font-size: 15px !important;
+  h2 {
+    font-size: 19px !important;
+  }
+}
+
+.commitmentDetail {
+  a {
+    color: #fff !important;
+    text-decoration: underline !important;
+  }
+  a:hover {
+    color: #ff9900 !important;
+  }
+}
+
 
 
 a, p, h1, h2, h3, h4 {
   font-family: 'Open Sans', sans-serif !important;
-}
-.gbtn.greenbig {
-  background-image: url('../gobtn.png');
-  width: 422px;
-  height: 107px;
-  text-align: center;
-  display: block;
-  margin: auto;
 }
 
  .explode {
@@ -356,7 +367,7 @@ div.Toastify__toast-body {
   margin-top: 40px;
   width: 820px;
   text-align: left;
-  padding-left: 140px;
+  padding-left: 20px;
   height: 500px !important;
   overflow: scroll;
   overflow-x: hidden;

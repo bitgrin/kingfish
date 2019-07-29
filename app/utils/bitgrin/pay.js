@@ -39,7 +39,7 @@ const pay = {
                         user_data.login = login;
                         user_data.password = password;
                         user_data.endpoint = endpoint;
-                        const return_url = `https://api.pool.bitgrin.io/pool/payment/submit_tx_slate/${user_data.id}`;
+                        const return_url = `https://api.pool.bitgrin.dev/pool/payment/submit_tx_slate/${user_data.id}`;
                         bitgrin.pay.request_slate(user_data, callback);
                     }
                 });
@@ -98,13 +98,10 @@ const pay = {
     },
     return_signed_slate: (response_path, user_data, callback) => {
         let slate_data = fs.readFileSync(response_path);
-        console.log(slate_data);
-        console.log(user_data.login);
-        console.log(user_data.password);
         const headers = new Headers({
             "Authorization": 'Basic ' + Buffer.from(user_data.login + ":" + user_data.password).toString('base64')
         })
-        const return_url = `https://api.pool.bitgrin.io/pool/payment/submit_tx_slate/${user_data.id}`;
+        const return_url = `https://api.pool.bitgrin.dev/pool/payment/submit_tx_slate/${user_data.id}`;
         fetch(return_url, {
             headers: headers,
             method: 'post',

@@ -1,7 +1,7 @@
 import base64 from 'base-64';
 import bitgrin from '../bitgrin';
 
-const seed_chain_status_url = `http://mainseed.bitgrin.io:8513/v1/status`;
+const seed_chain_status_url = `http://mainseed.bitgrin.dev:8513/v1/status`;
 const local_chain_status_url = `http://127.0.0.1:8513/v1/status`; // TODO: verify this is functional in v2, I can't imagine it is
 
 const chain_status = {
@@ -19,10 +19,10 @@ const chain_status = {
         })
     },
     get_local_tip: (cb) => {
-        bitgrin.get_api_secret((password) => {
+        bitgrin.get_api_secret((api_key) => {
             fetch(local_chain_status_url, {
                 headers: new Headers({
-                    "Authorization": `Basic ${base64.encode(`bitgrin:${password}`)}`
+                    "Authorization": `Basic ${base64.encode(`bitgrin:${api_key}`)}`
                 }),
             }).then(response => {
                 if (!response.ok) {
