@@ -49,8 +49,7 @@ class InitializeWallet extends Component<Props> {
 }
 
 function mapStateToProps(state) {
-    return st
-    ate;
+    return state;
 }
 
 function mapDispatchToProps(dispatch) {

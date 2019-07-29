@@ -17,7 +17,7 @@ function getFilesizeInBytes(filename) {
 		var stats = fs.statSync(filename)
 		var fileSizeInBytes = stats["size"]
 		return fileSizeInBytes
-	}
+    }
 	catch (e) {
         console.log(e);
 		return -1;
@@ -31,17 +31,17 @@ const sync = {
         console.log(`get sync state ${bitgrin_header_data_pmmr()} ${hdsize}`)
         console.log(`get sync state ${bitgrin_sync_head_pmmr()} ${shsize}`)
         if(hdsize == -1 && shsize == -1) {
-            return "Searching for peers...";
+            return "Bootstrapping node... If this takes more than 5 minutes try restarting Kingfish.";
         }
         if(hdsize != 53) {
             // let per = (hdsize / 2584227 * 100).toFixed(0);
-            return `Verifying rangeproofs... ${hdsize}`;
+            return `Loading headers...`;
         }
         else {
             if(shsize == -1) {
-                return "Connecting to peers...";
+                return "Connecting to peers... If this takes more than 5 minutes try restarting Kingfish.";
             }
-            let per = (shsize / 10000000 * 100).toFixed(0);
+            let per = (shsize / 15000000 * 100).toFixed(0);
             return `Getting headers ${per}%`;
         }
         return undefined;

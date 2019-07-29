@@ -16,6 +16,18 @@ $seed-word-digit: rgb(161, 148, 120);
 // $error-color: #ff0000;
 // $seed-word-digit: #ccc;
 
+.passwordPrompt, .passwordPrompt h4 {
+  color: #000 !important;
+  .red {
+    color: #ff0000 !important;
+  }
+  input {
+    color: #000 !important;
+  }
+}
+.passwordPrompt {
+  padding-top: 60px;
+}
 
 #loading {
   width: 894px;
@@ -27,6 +39,10 @@ $seed-word-digit: rgb(161, 148, 120);
   background-color: $color-primary;
   margin: 0px;
   padding: 0px;
+}
+.passwordPrompt {
+  background: rgb(255,153,0) !important;
+  background: linear-gradient(180deg, rgba(255,153,0,1) 0%, rgba(6,78,167,1) 0%, rgba(255,153,0,1) 0%, rgba(180,108,0,1) 100%) !important;
 }
 
 .macosx-loading {

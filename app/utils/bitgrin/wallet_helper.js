@@ -9,14 +9,36 @@ let password_handlers = [];
 
 const wallet_helper = {
     writing_down_recovery_phrase: false,
-    set_pass: (t_pass) => {
-        _wallet_password = t_pass;
-        for(let h_idx=0; h_idx<password_handlers.length; h_idx++) {
-            let handler = password_handlers[h_idx];
-            handler(_wallet_password);
-        }
-        is_prompting_for_password = false;
-        bitgrin.set_readiness(bitgrin.READY_LEVELS.READY);
+    set_pass: (t_pass, successCb) => {
+        // Check that the password works
+        wallet_helper.password_valid(t_pass, (valid) => {
+            if(valid) {
+                successCb(true);
+                _wallet_password = t_pass;
+                for(let h_idx=0; h_idx<password_handlers.length; h_idx++) {
+                    let handler = password_handlers[h_idx];
+                    handler(_wallet_password);
+                }
+                is_prompting_for_password = false;
+                bitgrin.set_readiness(bitgrin.READY_LEVELS.READY);
+            }
+            else {
+                successCb(false);
+            }
+        });
+    },
+    password_valid: (pass, cb) => {
+        let info_str = `${bitgrin.bg_wallet_bin_path} -p="${pass}" info`;
+        let child_process = spawn(info_str, {shell: true});
+        child_process.on('exit', function (code) {
+            console.log(`EXIT WITH CODE: ${code}`);
+            if(code != 0) {
+                cb(false);
+            }
+            else {
+                cb(true);
+            }
+        });
     },
     wallet_pass: async () => {
         if(typeof(_wallet_password) != 'undefined') {

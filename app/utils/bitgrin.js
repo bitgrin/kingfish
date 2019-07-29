@@ -48,7 +48,7 @@ const wallet_api_secret_path = () => {
     return path.join(bitgrin_main_path(), '.api_secret');
 }
 const owner_api_base = "http://127.0.0.1:8520";
-const bitgrin_version = '2.0.0-beta-3';
+const bitgrin_version = '2.0.0-beta-4';
 const bg_root = path.join(os.homedir(), ".bitgrin");
 const bg_bin_directory = path.join(bg_root, "bin");
 

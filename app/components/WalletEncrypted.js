@@ -21,26 +21,69 @@ class WalletEncrypted extends Component<Props> {
   props: Props;
   constructor() {
     super();
-    this.state = {}
+    this.state = {
+      freeze_input: false
+    }
   }
   open_wallet() {
-      bitgrin.wallet_helper.set_pass(this.pass);
+    this.setState({...this.state, 
+      freeze_input: true
+    });
+    bitgrin.wallet_helper.set_pass(this.pass, (success) => {
+      if(success) {
+        // Log in
+        this.setState({...this.state, 
+          password_valid: true
+        });
+      }
+      else {
+        this.setState({...this.state, 
+          password_valid: false,
+          freeze_input: false
+        });
+      }
+    });
   }
   set_pass(e) {
-    console.log(e.target.value);
     this.pass = e.target.value;
   }
+  _handleKeyDown(e) {
+    if (e.key === 'Enter') {
+      this.open_wallet();
+    }
+  }
   render() {
+    let validation_markup = "";
+    if(typeof(this.state.password_valid) != 'undefined') {
+      if(this.state.password_valid) {
+        // Got a good password set
+        validation_markup = <h4>Unencrypting wallet...</h4>;
+      }
+      else {
+        // Bad password entered
+        validation_markup = <h4 className="red">ERROR: Incorrect password.</h4>;
+      }
+    }
     let classes = this.props.hide ? 'hideLoading' : '';
     if(process.platform.includes("darwin")) {
       classes = `${classes} macosx-loading`;
     }
+    classes = `${classes} passwordPrompt`;
+    let fields = <h4>Loading...</h4>;
+    if(!this.state.freeze_input) { 
+      fields = (<div>
+      <input
+      autoFocus
+      onKeyDown={this._handleKeyDown.bind(this)} type="password" onChange={this.set_pass.bind(this)} placeholder="Your wallet password" />
+      <input onClick={this.open_wallet.bind(this)} type="submit" /></div>);
+    }
     return (
         <div id="loading" className={classes}>
                 <div className="centered vcenter">
-                    <h4>Enter wallet password:</h4>
-                    <input onChange={this.set_pass.bind(this)} placeholder="Your wallet password" />
-                    <input onClick={this.open_wallet.bind(this)} type="submit" />
+                    <h4>Wallet Password:</h4>
+                    {fields}
+                    <br />
+                    {validation_markup}
                 </div>
         </div>
     )
