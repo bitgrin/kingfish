@@ -31,7 +31,7 @@ class Dashboard extends Component<Props> {
     let summary = chain.wallet_summary;
     window.sum = summary;
     let mature_balance = bitgrin.to_xbg(summary.amount_currently_spendable);
-    let immature_balance = bitgrin.to_xbg(summary.amount_awaiting_confirmation + summary.amount_immature);
+    let immature_balance = bitgrin.to_xbg(parseInt(summary.amount_awaiting_confirmation) + parseInt(summary.amount_immature));
     let refreshButtonClass = 'refreshBtn';
     if(this.state.refreshing) {
         refreshButtonClass = 'refreshBtnAnimate';
