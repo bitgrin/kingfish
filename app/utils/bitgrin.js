@@ -482,9 +482,10 @@ const bitgrin = {
             child_process.on('exit', function (code) {
                 wallet_log += `EXIT WITH CODE: ${code}`;
                 // Try to restart it
-                setTimeout(2000, () => {
+                setTimeout(() => {
+                    _bitgrin_wallet_process = null;
                     bitgrin.bitgrin_wallet_listen_process();
-                });
+                }, 2000);
             });
         }
     },
