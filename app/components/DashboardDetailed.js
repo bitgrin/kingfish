@@ -14,6 +14,7 @@ import { bindActionCreators } from 'redux';
 import { sync } from 'realpath-native';
 import open from 'open';
 import { json } from 'graphlib';
+import globals from '../globals';
 
 function formatDate(date) {
     var monthNames = [
@@ -64,10 +65,10 @@ class DashboardDetailed extends Component<Props> {
     let friendly_immature_balance = '';
 
     if(!isNaN(mature_balance)) {
-        friendly_mature_balance = `${mature_balance.toFixed(2)} XBG`;
+        friendly_mature_balance = `${mature_balance.toFixed(globals.XBG_PRECISION)} XBG`;
     }
     if(!isNaN(immature_balance)) {
-        friendly_immature_balance = `${immature_balance.toFixed(2)} XBG`;
+        friendly_immature_balance = `${immature_balance.toFixed(globals.XBG_PRECISION)} XBG`;
     }
     
     let friendly_height = 'Chain not synchronized';

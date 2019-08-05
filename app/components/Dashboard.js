@@ -12,6 +12,8 @@ import bitgrin from '../utils/bitgrin';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { sync } from 'realpath-native';
+import globals from '../globals';
+import open from 'open';
 
 type Props = {};
 
@@ -23,6 +25,10 @@ class Dashboard extends Component<Props> {
         refreshing: false
     }
   }
+  define(keyword) {
+      // Perform a definition lookup on the bitgrin wiki for a term
+      open(`https://bitgrin.dev/define/${keyword}`)
+  }
   render() {
     // height, immature_balance, mature_balance
     let chain = this.props.chain;
@@ -31,19 +37,43 @@ class Dashboard extends Component<Props> {
     let summary = chain.wallet_summary;
     window.sum = summary;
     let mature_balance = bitgrin.to_xbg(summary.amount_currently_spendable);
+    
+    /*
     let immature_balance = bitgrin.to_xbg(parseInt(summary.amount_awaiting_confirmation) + parseInt(summary.amount_immature));
+    */
+    
+    let amount_awaiting_confirmation = bitgrin.to_xbg(parseInt(summary.amount_awaiting_confirmation));
+    let amount_immature = bitgrin.to_xbg(parseInt(summary.amount_immature));
+    let awaiting_confirmation_summary = ``;
+    let amount_immature_summary = ``;
+
+    if(amount_awaiting_confirmation > 0.0) {
+        awaiting_confirmation_summary = `${amount_awaiting_confirmation.toFixed(globals.XBG_PRECISION)} XBG awaiting confirmation`;
+    }
+    if(amount_immature > 0.0) {
+        amount_immature_summary = `${amount_immature.toFixed(globals.XBG_PRECISION)} XBG immature`;
+    }
+
+    let awaiting_finalization = bitgrin.to_xbg(parseInt(summary.amount_awaiting_finalization));
+    let amount_locked = bitgrin.to_xbg(parseInt(summary.amount_locked));
+    let amount_locked_summary = ``;
+    let awaiting_finalization_summary = ``;
+
+    if(amount_locked > 0.0) {
+        amount_locked_summary += `${amount_locked.toFixed(globals.XBG_PRECISION)} XBG locked`;
+    }
+    if(awaiting_finalization > 0.0) {
+        awaiting_finalization_summary = `${awaiting_finalization.toFixed(globals.XBG_PRECISION)} XBG awaiting finalization`;
+    }
+
     let refreshButtonClass = 'refreshBtn';
     if(this.state.refreshing) {
         refreshButtonClass = 'refreshBtnAnimate';
     }
     let friendly_mature_balance = 'Loading...';
-    let friendly_immature_balance = '';
 
     if(!isNaN(mature_balance)) {
-        friendly_mature_balance = `${mature_balance.toFixed(2)} XBG`;
-    }
-    if(!isNaN(immature_balance)) {
-        friendly_immature_balance = `${immature_balance.toFixed(2)} XBG`;
+        friendly_mature_balance = `${mature_balance.toFixed(globals.XBG_PRECISION)} XBG`;
     }
     
     let synchronized = false;
@@ -68,15 +98,20 @@ class Dashboard extends Component<Props> {
     let balance_container_markup = (
         <div className='balanceContainerWrap'>
             <h2>{friendly_mature_balance}</h2>
-            <h4>{friendly_immature_balance} pending</h4>
+            {amount_immature_summary == `` ? `` : <h4>{amount_immature_summary}<i onClick={this.define.bind(this, 'immature')} className="tooltipIcon"></i></h4>}
+            {awaiting_confirmation_summary == `` ? `` : <h4>{awaiting_confirmation_summary}<i onClick={this.define.bind(this, 'awaiting_confirmation')} className="tooltipIcon"></i></h4>}
+            {amount_locked_summary == `` ? `` : <h4>{amount_locked_summary}<i onClick={this.define.bind(this, 'locked')} className="tooltipIcon"></i></h4>}
+            {awaiting_finalization_summary == `` ? `` : <h4>{awaiting_finalization_summary}<i onClick={this.define.bind(this, 'awaiting_finalization')} className="tooltipIcon"></i></h4>}
             <h5>{friendly_height}</h5><Glyphicon className={refreshButtonClass} glyph="refresh" />
+            <h5><Link to="/txhistory" className="viewTxes">
+                View transactions &raquo;
+            </Link></h5>
         </div>
     )
     if(!synchronized) {
         balance_container_markup = (
         <div className='balanceContainerWrap'>
             <h2>{friendly_mature_balance}</h2>
-            <h4>{friendly_immature_balance}</h4>
             <h4>Synchronizing...</h4>
             <h5>{friendly_height}</h5><Glyphicon className={refreshButtonClass} glyph="refresh" />
         </div>
@@ -101,9 +136,6 @@ class Dashboard extends Component<Props> {
                     </div>
                 </div>
             </div>
-            <Link to="/txhistory" className="viewTxes">
-                View transactions...
-            </Link>
         </div>
     );
   }

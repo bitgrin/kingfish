@@ -429,6 +429,23 @@ div.Toastify__toast-body {
   margin-right: 8px;
 }
 
+.tooltipIcon {
+  height: 18px !important;
+  width: 18px !important;
+  display: inline-block;
+  background-size: 100%;
+  position: relative;
+  top: 4px;
+  left: 8px;
+  filter: invert(75%);
+  cursor: pointer;
+  background-image: url('../img/help.png');
+}
+
+.tooltipIcon:hover {
+  filter: invert(100%);
+}
+
 .dragDropIcon {
   height: 120px;
   width: 105px;
@@ -515,10 +532,9 @@ h1, h2, h3, h4 {
 } */
 
 .viewTxes {
-  color: $color-primary !important;
-  font-size: 0.8em !important;
-  position: relative;
-  bottom: 120px;
+  display: block;
+  padding-top: 24px;
+  font-size: 1.2em !important;
 }
 
 /* 900 width window, 500px object, middle = 200px offset */
