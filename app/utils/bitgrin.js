@@ -41,6 +41,12 @@ const get_server_toml_path = () => {
 const get_wallet_toml_path = () => {
     return path.join(bitgrin_main_path(), 'bitgrin-wallet.toml');
 }
+const get_server_log_path = () => {
+    return path.join(bitgrin_main_path(), 'bitgrin-server.log');
+}
+const get_wallet_log_path = () => {
+    return path.join(bitgrin_main_path(), 'bitgrin-wallet.log');
+}
 const get_pending_slate_path = () => {
     return path.join(bitgrin_main_path(), 'slates');
 }
@@ -119,6 +125,8 @@ const end_process = (child, title="None") => {
     return false;
 }
 const bitgrin = {
+    get_server_log_path,
+    get_wallet_log_path,
     get_pending_slate_path,
     bg_bin_path,
     bg_wallet_bin_path,
