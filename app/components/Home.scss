@@ -294,7 +294,16 @@ pre {
 .rcvTogglerMarginAdjust {
   margin-left: 120px !important;
 }
-
+.absCopy {
+  position: absolute !important;
+  left: 40%;
+  margin-top: 20px;
+  width: 200px;
+  height: 40px;
+  span {
+    font-family: 'Courier New', Courier, monospace !important;
+  }
+}
 .well {
   width: 400px;
   margin: auto;

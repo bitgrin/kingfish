@@ -11,6 +11,10 @@ import Loading from './components/Loading';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+// Logs
+import TailLib from 'tail';
+const Tail = TailLib.Tail;
+
 class Chain extends Component<Props> {
   constructor() {
     super();
@@ -19,11 +23,49 @@ class Chain extends Component<Props> {
       outputs: [],
       height: 0,
       loadingMessage: 'Loading...',
-      isLoading: true
+      isLoading: true,
+      wallet_log_str: ' -- Wallet log --',
+      server_log_str: ' -- Server log --'
     }
     bitgrin.bootstrap();
     // toast.info(`Incoming Payment: ${amt} XBG`, {autoClose: 3000});
     window.toast = toast;
+  }
+  componentDidMount() {
+    this.listen_to_logs();
+  }
+  insert_log(data, log_type) {
+      let lines = [];
+      if(typeof(data) == 'string') {
+          lines = [data];
+      }
+      else {
+          lines = data.split('\n').reverse().join('\n');
+      }
+      this.props.updateLog({
+        type: log_type,
+        txt: data
+      });
+  }
+  listen_to_logs() {
+    let logComponent = this;
+    this.server_tail = new Tail(bitgrin.get_server_log_path());
+    this.server_tail.on("line", function(data) {
+        logComponent.insert_log(data, 'server');
+    });
+
+    this.server_tail.on("error", function(error) {
+        logComponent.insert_log(error, 'server');
+    });
+
+    this.wallet_tail = new Tail(bitgrin.get_wallet_log_path());
+    this.wallet_tail.on("line", function(data) {
+        logComponent.insert_log(data, 'wallet');
+    });
+    
+    this.wallet_tail.on("error", function(error) {
+        logComponent.insert_log(error, 'wallet');
+    });
   }
   updateLoop() {
     setTimeout(this.updateLoop.bind(this), 3000);

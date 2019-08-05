@@ -1,5 +1,5 @@
 // @flow
-import { CHAIN_UPDATE_SEED_HEIGHT, CHAIN_UPDATE_LOCAL_HEIGHT, CHAIN_UPDATE_OUTPUTS, CHAIN_UPDATE_WALLET_SUMMARY, CHAIN_UPDATE_WALLET_TXS } from '../actions/chain';
+import { CHAIN_UPDATE_SEED_HEIGHT, CHAIN_UPDATE_LOCAL_HEIGHT, CHAIN_UPDATE_OUTPUTS, CHAIN_UPDATE_WALLET_SUMMARY, CHAIN_UPDATE_WALLET_TXS, CHAIN_UPDATE_LOG } from '../actions/chain';
 import type { Action } from './types';
 
 const defaultState = {
@@ -8,7 +8,9 @@ const defaultState = {
     outputs: [],
     wallet_summary: {},
     synchronized: false,
-    wallet_txs: []
+    wallet_txs: [],
+    server_log: ' -- Server logs -- ',
+    wallet_log: ' -- Wallet logs -- '
 } 
 
 export default function(state = defaultState, action: Action) {
@@ -28,6 +30,16 @@ export default function(state = defaultState, action: Action) {
             return {...state, wallet_summary: action.payload};
         case CHAIN_UPDATE_WALLET_TXS:
             return {...state, wallet_txs: action.payload};
+        case CHAIN_UPDATE_LOG:
+            if(action.payload.type == 'server') {
+                console.log(`#@: ${JSON.stringify(action.payload)}`);
+                console.log(action.payload.txt);
+                console.log(state.server_log);
+                return {...state, server_log: action.payload.txt + "\n" + state.server_log};
+            }
+            else {
+                return {...state, wallet_log: action.payload.txt + "\n" + state.wallet_log};
+            }
         default:
             return state;
         }

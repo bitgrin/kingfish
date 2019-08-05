@@ -439,6 +439,10 @@ const bitgrin = {
         if(bitgrin.readiness == bitgrin.READY_LEVELS.SHUTDOWN || bitgrin.readiness == bitgrin.READY_LEVELS.SHUTTING_DOWN) {
             return;
         }
+        if(_bitgrin_wallet_owner_api_process == 1) {
+            // Ignore if it's somehow running in the background already
+            return;
+        }
         console.log('start bitgrin_wallet_owner_api_process');
         if(typeof(_bitgrin_wallet_owner_api_process == 'undefined')) {
             let m_pass = await wallet_helper.wallet_pass();
@@ -447,6 +451,12 @@ const bitgrin = {
             _bitgrin_wallet_owner_api_process = child_process;
 
             child_process.stdout.on('data', function (data) {
+                let str = data.toString();
+                if(str.includes("error binding")) {
+                    // This is already running some other way, or another program is using the port.
+                    _bitgrin_wallet_owner_api_process = 1;
+                    return;
+                }
                 console.log(data.toString());
             });
             
@@ -456,6 +466,10 @@ const bitgrin = {
             
             child_process.on('exit', function (code) {
                 // Try to restart it
+                if(_bitgrin_wallet_owner_api_process == 1) {
+                    // Ignore if it's somehow running in the background already
+                    return;
+                }
                 _bitgrin_wallet_owner_api_process = null;
                 console.log(`wallet owner_api exit ${code}`);
                 setTimeout(2000, () => {
@@ -465,6 +479,10 @@ const bitgrin = {
         }
     },
     bitgrin_wallet_listen_process: async () => {
+        if(_bitgrin_wallet_process == 1) {
+            // Ignore if it's somehow running in the background already
+            return;
+        }
         if(bitgrin.readiness == bitgrin.READY_LEVELS.SHUTDOWN || bitgrin.readiness == bitgrin.READY_LEVELS.SHUTTING_DOWN) {
             return;
         }
@@ -477,9 +495,15 @@ const bitgrin = {
             _bitgrin_wallet_process = child_process;
             
             child_process.stdout.on('data', function (data) {
-                wallet_log += data.toString();
+                let str = data.toString();
+                wallet_log += str;
                 if(typeof(store) != 'undefined') {
                     store.dispatch(logsUpdated({wallet_log: data.toString()}));
+                }
+                if(str.includes("error binding")) {
+                    // This is already running some other way, or another program is using the port.
+                    _bitgrin_wallet_process = 1;
+                    return;
                 }
             });
             
@@ -488,6 +512,10 @@ const bitgrin = {
             });
             
             child_process.on('exit', function (code) {
+                if(_bitgrin_wallet_process == 1) {
+                    // Ignore if it's somehow running in the background already
+                    return;
+                }
                 wallet_log += `EXIT WITH CODE: ${code}`;
                 // Try to restart it
                 setTimeout(() => {
@@ -498,6 +526,10 @@ const bitgrin = {
         }
     },
     bitgrin_server_process: () => {
+        if(_bitgrin_server_process == 1) {
+            // Ignore if it's somehow running in the background already
+            return;
+        }
         if(bitgrin.readiness == bitgrin.READY_LEVELS.SHUTDOWN || bitgrin.readiness == bitgrin.READY_LEVELS.SHUTTING_DOWN) {
             return;
         }
@@ -518,8 +550,13 @@ const bitgrin = {
             });
             
             child_process.stderr.on('data', function (data) {
-                console.log(data.toString());
+                let str = data.toString();
                 server_log += data.toString() || data || "";
+                if(str.includes("error binding")) {
+                    // This is already running some other way, or another program is using the port.
+                    _bitgrin_server_process = 1;
+                    return;
+                }
             });
             
             child_process.on('exit', function (code) {
@@ -531,6 +568,10 @@ const bitgrin = {
                 });
             });
             child_process.on('close', function (code, signal) {
+                if(_bitgrin_server_process == 1) {
+                    // Ignore if it's somehow running in the background already
+                    return;
+                }
                 console.log(`CLOSE SERVER`);
                 server_log += `CLOSE WITH CODE: ${code} -- SIGNAL: ${signal}`;
                 // Try to restart it
