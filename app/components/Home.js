@@ -77,7 +77,7 @@ class Home extends Component<Props> {
       <div className={containerClasses} data-tid="container">
         {titlebarDragger}
         <div>
-            <div className='vnum'>v1.1.2</div>
+            <div className='vnum'>v1.1.3</div>
             <div id='topBar'>
                 {/* <img className='logo' src="bird300.png" width="64" />
                 <h3>Kingfish</h3> */}
@@ -110,7 +110,6 @@ class Home extends Component<Props> {
         <Link to="/settings" className="settingsButtonContainer"><Glyphicon className='settingsButton' glyph="cog" /></Link>
       </div>
     )
-
     if(!bitgrin.wallet_helper.wallet_ready()) {
       home = <InitializeWallet />;
     }
