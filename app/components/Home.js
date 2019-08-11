@@ -77,7 +77,7 @@ class Home extends Component<Props> {
       <div className={containerClasses} data-tid="container">
         {titlebarDragger}
         <div>
-            <div className='vnum'>v1.1.4</div>
+            <div className='vnum'>v1.1.5</div>
             <div id='topBar'>
                 {/* <img className='logo' src="bird300.png" width="64" />
                 <h3>Kingfish</h3> */}

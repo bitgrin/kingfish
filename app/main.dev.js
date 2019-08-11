@@ -129,7 +129,7 @@ if (!gotTheLock) {
 
     // TODO: re-enable adn adjust CSS. This breaks copy and paste on MacOS
     // const menuBuilder = new MenuBuilder(mainWindow);
-    // menuBuilder.buildMenu();
+    menuBuilder.buildMenu();
 
     // Remove this if your app does not use auto updates
     // eslint-disable-next-line
