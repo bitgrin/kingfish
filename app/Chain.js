@@ -49,23 +49,28 @@ class Chain extends Component<Props> {
   }
   listen_to_logs() {
     let logComponent = this;
-    this.server_tail = new Tail(bitgrin.get_server_log_path());
-    this.server_tail.on("line", function(data) {
-        logComponent.insert_log(data, 'server');
-    });
+    try {
+      this.server_tail = new Tail(bitgrin.get_server_log_path());
+      this.server_tail.on("line", function(data) {
+          logComponent.insert_log(data, 'server');
+      });
 
-    this.server_tail.on("error", function(error) {
-        logComponent.insert_log(error, 'server');
-    });
+      this.server_tail.on("error", function(error) {
+          logComponent.insert_log(error, 'server');
+      });
 
-    this.wallet_tail = new Tail(bitgrin.get_wallet_log_path());
-    this.wallet_tail.on("line", function(data) {
-        logComponent.insert_log(data, 'wallet');
-    });
-    
-    this.wallet_tail.on("error", function(error) {
-        logComponent.insert_log(error, 'wallet');
-    });
+      this.wallet_tail = new Tail(bitgrin.get_wallet_log_path());
+      this.wallet_tail.on("line", function(data) {
+          logComponent.insert_log(data, 'wallet');
+      });
+      
+      this.wallet_tail.on("error", function(error) {
+          logComponent.insert_log(error, 'wallet');
+      });
+    }
+    catch(e) {
+      console.log(e);
+    }
   }
   updateLoop() {
     setTimeout(this.updateLoop.bind(this), 3000);
