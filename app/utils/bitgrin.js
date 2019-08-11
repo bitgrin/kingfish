@@ -97,10 +97,12 @@ var download = function(uri, filename, callback){
     });
 };
 const download_bin_zip = async (url, cb) => {
+    console.log(`DOWNLOAD::download_bin_zip ${url}`);
     download(url, bg_bin_zip_path, (msg) => {
+        console.log(`DOWNLOAD::download_bin_zip complete`);
         console.log(msg);
         unzip_bin(bg_bin_zip_path, bg_bin_directory);
-        if(process.platform.includes('darwin')) {
+        if(process.platform.includes('darwin') || process.platform.includes('linux')) {
             // Set executable
             fs.chmodSync(bg_bin_path_noshell, "755");
             fs.chmodSync(bg_wallet_bin_path_noshell, "755");

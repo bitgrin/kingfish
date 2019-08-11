@@ -38,6 +38,12 @@ export default class MenuBuilder {
           click: () => {
             this.mainWindow.inspectElement(x, y);
           }
+        },
+        {
+          label: 'Debug',
+          click: () => {
+            this.mainWindow.webContents.openDevTools()
+          }
         }
       ]).popup(this.mainWindow);
     });
@@ -52,6 +58,12 @@ export default class MenuBuilder {
           accelerator: 'Command+Q',
           click: () => {
             app.quit();
+          }
+        },
+        {
+          label: 'Debug',
+          click: () => {
+            this.mainWindow.webContents.openDevTools()
           }
         }
       ]
@@ -74,6 +86,12 @@ export default class MenuBuilder {
             accelerator: 'Ctrl+W',
             click: () => {
               this.mainWindow.close();
+            }
+          },
+          {
+            label: 'Debug',
+            click: () => {
+              this.mainWindow.webContents.openDevTools()
             }
           }
         ]
