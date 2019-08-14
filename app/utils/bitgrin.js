@@ -315,7 +315,6 @@ const bitgrin = {
         });
     },
 	run_wallet_clean: async (callback, log_callback) => {
-		let bitgrin.tick = false;
 		//shutdown
 		bitgrin.set_readiness(bitgrin.READY_LEVELS.SHUTDOWN)
 		
