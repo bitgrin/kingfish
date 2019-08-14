@@ -298,7 +298,7 @@ const bitgrin = {
             return;
         }
         let m_pass = await wallet_helper.wallet_pass();
-        let cmds = `${bg_wallet_bin_path} -p="${m_pass}" check`;
+        let cmds = `${bg_wallet_bin_path} -p="${m_pass}" check -d`;
         let child_process = spawn(cmds, {shell: true});
         
         child_process.stdout.on('data', function (data) {
