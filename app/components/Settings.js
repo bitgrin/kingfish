@@ -74,6 +74,25 @@ class Settings extends Component<Props> {
         })
     })
   }
+  runWalletClean() {
+    this.setState({
+        ...this.state,
+        walletCleanRunning: true
+    })
+    bitgrin.run_wallet_clean(() => {
+        this.setState({
+            ...this.state,
+            walletCleanRunning: false,
+            wallet_check_log: ''
+        })
+    }, (log) => {
+        this.setState({
+            ...this.state,
+            wallet_check_log: `${log}\n${this.state.wallet_check_log}`
+        })
+    })
+  }
+
   viewLogs() {
       this.setState({
           ...this.state,
@@ -119,6 +138,24 @@ class Settings extends Component<Props> {
             </div>
         )
     }
+	let walletCleanMarkup = (
+        <div>
+            <label>Run a wallet clean</label>
+			<Button bsStyle="primary" onClick={this.runWalletClean.bind(this)}>RUN WALLET CLEAN &raquo;</Button>
+            <HelpBlock>Removes all synchronised blockchain data to force a resync.</HelpBlock>
+        </div>
+    )
+	if(this.state.walletCleanRunning) {
+        walletCleanMarkup = (
+            <div>
+            <label>Run a wallet clean</label>
+            <Button bsStyle="primary" onClick={this.runWalletClean.bind(this)}>RUN WALLET CLEAN &raquo;</Button>
+			<Button bsStyle="primary" disabled onClick={this.runWalletClean.bind(this)}>Wallet clean in progress...</Button>
+            <pre className="logOutputWalletCheck">{this.state.clean_check_log}</pre>
+            </div>
+        )
+    }
+
     futureFeaturesUI = ''; // Disable future features
     return (
         <div className='settingsContainer'>
@@ -127,6 +164,7 @@ class Settings extends Component<Props> {
             <Switch value={this.props.outsideWorldPayments} onChange={this.outsideWorldPayments.bind(this)} name='outsideWorldPayments' />
             <HelpBlock>Listens on 0.0.0.0:8515. Useful for receiving payments from others via HTTP.</HelpBlock>
             {walletCheckMarkup}
+			{walletCleanMarkup}
             {futureFeaturesUI}
             <Button bsStyle="primary" onClick={this.viewLogs.bind(this)}>VIEW LOGS</Button>
             <div className='saveContainer'>

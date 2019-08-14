@@ -297,6 +297,7 @@ const bitgrin = {
         if(bitgrin.readiness == bitgrin.READY_LEVELS.SHUTDOWN || bitgrin.readiness == bitgrin.READY_LEVELS.SHUTTING_DOWN) {
             return;
         }
+		toast.info(`Wallet check initiated, this might take few minutes`, {autoClose: 4000});
         let m_pass = await wallet_helper.wallet_pass();
         let cmds = `${bg_wallet_bin_path} -p="${m_pass}" check -d`;
         let child_process = spawn(cmds, {shell: true});
@@ -312,6 +313,34 @@ const bitgrin = {
         child_process.on('exit', function (code) {
             callback();
         });
+    },
+	run_wallet_clean: async (callback, log_callback) => {
+		let bitgrin.tick = false;
+		//shutdown
+		bitgrin.set_readiness(bitgrin.READY_LEVELS.SHUTDOWN)
+		
+		//kill all possible interfering processes #TODO figure out why this doesn't work if the password is inputted
+		end_process(_bitgrin_wallet_process, 'wallet_process');
+		end_process(_bitgrin_server_process, 'server_process');
+		end_process(_bitgrin_wallet_owner_api_process, 'owner_api_process');
+
+
+		toast.info(bitgrin.readiness, {autoClose: 6000});
+		toast.info(`Wallet clean in progress`, {autoClose: 4000});
+		let cmds = `${bg_bin_path} clean`;
+		let child_process = spawn(cmds, {shell: true});
+		
+		child_process.stdout.on('data', function (data) {
+			log_callback(data.toString());
+		});
+			
+		child_process.stderr.on('data', function (data) {
+			log_callback(data.toString());
+		});
+			
+		child_process.on('exit', function (code) {
+			callback();
+		});
     },
     initiate_file_receive: (path_callback, log_callback, process_ended_cb) => {
         if(bitgrin.readiness == bitgrin.READY_LEVELS.SHUTDOWN || bitgrin.readiness == bitgrin.READY_LEVELS.SHUTTING_DOWN) {
