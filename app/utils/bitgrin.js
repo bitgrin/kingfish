@@ -213,7 +213,6 @@ const bitgrin = {
         bitgrin.bitgrin_wallet_owner_api_process();*/
     },
     tick: () => {
-        console.log('tick');
         // Keep processes alive and password correct update loop
         if(_bitgrin_wallet_process == null) {
             bitgrin.bitgrin_wallet_listen_process();
@@ -225,7 +224,7 @@ const bitgrin = {
             bitgrin.bitgrin_wallet_owner_api_process();
         }
 
-        setTimeout(bitgrin.tick.bind(this), 2000);
+        setTimeout(bitgrin.tick, 2000);
     },
     set_store: (_store) => {
         store = _store;

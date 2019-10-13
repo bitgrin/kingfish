@@ -119,12 +119,12 @@ class Chain extends Component<Props> {
     }
     bitgrin.chain_status.get_seed_height((h) =>{
       this.props.updateSeedHeight(h)
-    });
+    })
     bitgrin.chain_status.get_local_height((h) =>{
       this.props.updateLocalHeight(h)
     });
     bitgrin.get_wallet_outputs((outputs) => {
-      console.log(`outputs length: ${outputs.length}   this.props.chain.outputs.length: ${this.props.chain.outputs.length}`);
+ 
       if(outputs.length > this.props.chain.outputs.length) {
         // Additional outputs detected, check if they are recent
         let output_height = outputs[outputs.length-1].output.height;

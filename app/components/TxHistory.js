@@ -49,7 +49,7 @@ class TxHistory extends Component<Props> {
             txSendLabel = "Received";
         }
         return (
-            <div key={tx.tx_slate_id}>
+            <div key={tx.creation_ts}>
                 <h4>Transaction ID (<span className='orange'>{confirmedTxt}</span>)</h4>
                 <h4 className='txidtext' onClick={() => {this.copy(tx.tx_slate_id)}}>{tx.tx_slate_id}</h4>
                 <h4>{txSendLabel} {delta} {friendly_date}</h4>

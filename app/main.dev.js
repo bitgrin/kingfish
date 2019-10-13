@@ -24,6 +24,9 @@ export default class AppUpdater {
 }
 
 let mainWindow = null;
+//Ugly workaround for minimizing bug
+let width = 900;
+let height = 680;
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
@@ -93,10 +96,11 @@ if (!gotTheLock) {
       await installExtensions();
     }
 
+
     mainWindow = new BrowserWindow({
       show: false,
-      width: 900,
-      height: 680,
+      width: width,
+      height: height,
       resizable: false,
       title: "Kingfish",
       backgroundColor: "#333",
@@ -104,7 +108,9 @@ if (!gotTheLock) {
       transparent: true, 
       // frame: false
     });
-
+    mainWindow.on('restore', (e) => {
+      mainWindow.setSize(width, height);
+    });
     mainWindow.setMenu(null);
 
     mainWindow.loadURL(`file://${__dirname}/app.html`);

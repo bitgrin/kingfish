@@ -87,7 +87,7 @@ class DashboardDetailed extends Component<Props> {
     window.txs = txs;
     let outputsMarkup = (outputs || []).map((output) => {
         //{"commit":"09952e5782a0bcf9484600a63860e394ca12743719956ab46c1b56448b8d656276","output":{"commit":"09952e5782a0bcf9484600a63860e394ca12743719956ab46c1b56448b8d656276","height":"233146","is_coinbase":false,"key_id":"0300000000000000000000000000000000","lock_height":"0","mmr_index":null,"n_child":0,"root_key_id":"0200000000000000000000000000000000","status":"Unspent","tx_log_entry":0,"value":"200000000"}}
-        return <div class="commitmentDetail">
+        return <div class="commitmentDetail" key={output.commit}>
             <i>Height:</i> {output.output.height}<br />
             <i>Commitment {output.commit}</i><br />
             <i>Coinbase:</i> { output.output.is_coinbase ? "Yes" : "No"}<br />
