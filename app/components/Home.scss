@@ -456,6 +456,47 @@ div.Toastify__toast-body {
   filter: invert(100%);
 }
 
+.xbgLogo {
+  
+  height: 44px;
+  width: 44px;
+  background-image: url('../img/xbg.png');
+  background-size: 100%;
+  z-index: 5;
+}
+.mainTabIcon {
+  height: 44px;
+  width: 44px;
+  cursor: pointer;
+  background-image: url('../img/icons8-chevron-up-100.png');
+  // background-position-y: 4px; 
+  // background-repeat: no-repeat;
+  // margin: auto;
+  // margin-bottom: 10px;
+  background-size: 100%;
+  z-index: 5;
+}
+.mainTabIcon.balance {
+  background-image: url('../img/icons8-minimize-window-100.png');
+}
+.mainTabIcon.send {
+  background-image: url('../img/icons8-chevron-up-100.png');
+}
+.mainTabIcon.receive {
+  background-image: url('../img/icons8-down-button-100.png');
+}
+.mainTabIcon.bitgrinpay {
+  background-image: url('../img/icons8-keyboard-100.png');
+}
+.mainTabIcon.settings {
+  border-top: 1px solid white;
+  background-image: url('../img/icons8-slider-100.png');
+}
+
+.mainTabIcon:hover {
+  border: 3px dashed $color-primary;
+}
+
 .dragDropIcon {
   height: 120px;
   width: 105px;
@@ -586,6 +627,22 @@ h1, h2, h3, h4 {
   margin-left: 16px;
   position: relative;
   bottom: 12px;
+}
+.quickDashboardContainer {
+  position: absolute;
+  left: 300px;
+  top: 20px;
+  color: $color-primary !important;
+  h2 {
+    color: $color-primary !important;
+    font-size: 2em;
+  }
+  h2.balLab {
+    color: #fff !important;
+  }
+  h4 {
+    color: rgb(200, 200, 200) !important;
+  }
 }
 
 .blockContainer {

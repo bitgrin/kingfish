@@ -17,6 +17,7 @@ import { connect } from 'react-redux';
 import InitializeWallet from './InitializeWallet';
 import Mine from './Mine';
 import WalletEncrypted from './WalletEncrypted';
+import QuickBalance from './QuickBalance';
 import bitgrin from '../utils/bitgrin';
 
 type Props = {};
@@ -50,19 +51,6 @@ class Home extends Component<Props> {
   onSelectTab(t) {
     this.setState({...this.state, tabIndex: t})
   }
-  // onDragEnd(e) {
-  //   console.log('dragend');
-  //   window.e = e;
-  // }
-  // onDragOver(e) {
-  //   console.log('dragover');
-  // }
-  // onDrop(e) {
-  //   console.log('onDrop');
-  // }
-  // onDropCapture(e) {
-  //   console.log('onDropCapture');
-  // }
   render() {
     let containerClasses = 'container';
     let titlebarDragger = '';
@@ -79,9 +67,16 @@ class Home extends Component<Props> {
         <div>
             <div className='vnum'>v1.1.5</div>
             <div id='topBar'>
-                {/* <img className='logo' src="bird300.png" width="64" />
-                <h3>Kingfish</h3> */}
-                <Tabs onSelect={this.onSelectTab.bind(this)} selectedIndex={this.state.tabIndex}>
+              <QuickBalance />
+              <div>
+                <div className="xbgLogo"></div>
+                <div className="mainTabIcon balance"></div>
+                <div className="mainTabIcon send"></div>
+                <div className="mainTabIcon receive"></div>
+                <div className="mainTabIcon bitgrinpay"></div>
+                <div className="mainTabIcon settings"></div>
+              </div>
+                {/* <Tabs onSelect={this.onSelectTab.bind(this)} selectedIndex={this.state.tabIndex}>
                   <TabList>
                     <Tab>BALANCE</Tab>
                     <Tab>DETAIL</Tab>
@@ -104,7 +99,7 @@ class Home extends Component<Props> {
                   <TabPanel>
                     <Mine />
                   </TabPanel>
-                </Tabs>
+                </Tabs> */}
             </div>
         </div>
         <Link to="/settings" className="settingsButtonContainer"><Glyphicon className='settingsButton' glyph="cog" /></Link>

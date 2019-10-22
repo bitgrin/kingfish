@@ -35,7 +35,6 @@ class Dashboard extends Component<Props> {
     let local_height = chain.local_height;
     let seed_height = chain.seed_height;
     let summary = chain.wallet_summary;
-    window.sum = summary;
     let mature_balance = bitgrin.to_xbg(summary.amount_currently_spendable);
     
     /*
