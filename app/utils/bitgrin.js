@@ -54,7 +54,7 @@ const wallet_api_secret_path = () => {
     return path.join(bitgrin_main_path(), '.api_secret');
 }
 const owner_api_base = "http://127.0.0.1:8520";
-const bitgrin_version = '2.0.0';
+const bitgrin_version = '2.0.6';
 const bg_root = path.join(os.homedir(), ".bitgrin");
 const bg_bin_directory = path.join(bg_root, "bin");
 
@@ -66,7 +66,8 @@ const bg_wallet_bin_path = `"${path.join(bg_bin_directory, `bitgrin-${bitgrin_ve
 
 const bg_bin_zip_path = `${path.join(bg_bin_directory, `Bitgrin-${bitgrin_version}.zip`)}`;
 const download_path = () => {
-    let download_path_win = `https://github.com/bitgrin/bitgrin/releases/download/v${bitgrin_version}/BitGrin-Windows-10-64Bit-${bitgrin_version}.zip`;
+    // let download_path_win = `https://github.com/bitgrin/bitgrin/releases/download/v${bitgrin_version}/BitGrin-Windows-10-64Bit-${bitgrin_version}.zip`;
+    let download_path_win = "https://github.com/bitgrin/bitgrin/releases/download/2.0.6/BitGrin-Windows-10-64Bit-2.0.6.zip";
     let download_path_mac = `https://github.com/bitgrin/bitgrin/releases/download/v${bitgrin_version}/BitGrin-Mac-OS-${bitgrin_version}.zip`;
     let download_path_linux = `https://github.com/bitgrin/bitgrin/releases/download/v${bitgrin_version}/BitGrin-Linux-${bitgrin_version}.zip`;
     if(process.platform.includes('darwin')) {
