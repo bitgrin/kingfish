@@ -24,6 +24,7 @@ class Dashboard extends Component<Props> {
     this.state = {
         refreshing: false
     }
+    this.lastBlockAnimationTime = Date.now();
   }
   define(keyword) {
       // Perform a definition lookup on the bitgrin wiki for a term
@@ -90,6 +91,9 @@ class Dashboard extends Component<Props> {
                 friendly_height = `Fully synced  -  Height: ${local_height}`;
                 synchronized = true;
             }
+            else if (local_height > seed_height) {
+                friendly_height = `100% - Block ${local_height} / ${local_height}`;
+            }
             else {
                 friendly_height = `${per_synced}% - Block ${local_height} / ${seed_height}`;
             }
@@ -127,11 +131,20 @@ class Dashboard extends Component<Props> {
         </div>
         )
     }
+    // console.table(this.state)
+
+    let balanceContainerClass = "balanceContainer";
+    const timeSinceLastBlock = Date.now() - this.props.chain.time_of_last_block;
+    const timeSinceLastBlockAnimation = Date.now() - this.lastBlockAnimationTime;
+    if(timeSinceLastBlock < 1500 && timeSinceLastBlockAnimation > 2000 ) {
+        balanceContainerClass = "balanceContainer balanceContainerAnim";
+        this.lastBlockAnimationTime = Date.now();
+    }
     return (
         <div className='container' data-tid="container">
             <div>
                 <div className='balanceContainerOuter'>
-                    <div className='balanceContainer'>
+                    <div className={balanceContainerClass}>
                         {balance_container_markup}
                     </div>
                 </div>

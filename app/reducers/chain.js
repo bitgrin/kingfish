@@ -10,7 +10,8 @@ const defaultState = {
     synchronized: false,
     wallet_txs: [],
     server_log: ' -- Server logs -- ',
-    wallet_log: ' -- Wallet logs -- '
+    wallet_log: ' -- Wallet logs -- ',
+    time_of_last_block: Date.now()
 } 
 
 export default function(state = defaultState, action: Action) {
@@ -23,6 +24,11 @@ export default function(state = defaultState, action: Action) {
             if(action.payload == state.seed_height && typeof(state.seed_height) != 'undefined') {
                 synchronized = true;
             }
+            if(state.local_height !== action.payload) {
+                // New block
+                console.log(`## New Block #${action.payload}`);
+                return {...state, local_height: action.payload, synchronized: synchronized, time_of_last_block: Date.now()};
+            }
             return {...state, local_height: action.payload, synchronized: synchronized};
         case CHAIN_UPDATE_OUTPUTS:
             return {...state, outputs: action.payload};
@@ -32,9 +38,9 @@ export default function(state = defaultState, action: Action) {
             return {...state, wallet_txs: action.payload};
         case CHAIN_UPDATE_LOG:
             if(action.payload.type == 'server') {
-                console.log(`#@: ${JSON.stringify(action.payload)}`);
-                console.log(action.payload.txt);
-                console.log(state.server_log);
+                // console.log(`#@: ${JSON.stringify(action.payload)}`);
+                // console.log(action.payload.txt);
+                // console.log(state.server_log);
                 return {...state, server_log: action.payload.txt + "\n" + state.server_log};
             }
             else {

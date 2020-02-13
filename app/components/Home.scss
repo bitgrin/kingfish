@@ -568,6 +568,17 @@ h1, h2, h3, h4 {
   position: relative;
   top: 40px;
   /* background-image: linear-gradient(45deg, rgba(209, 209, 209, 0.5) 10%, rgba(255, 255, 255, 0.7)); */
+  
+  filter: none;
+  transition-duration: 2s;
+  transition-property: filter;
+}
+.balanceContainerAnim {
+  height: 410px;
+  width: 410px;
+  filter: saturate(200%);
+  transition-duration: 0s;
+  transition-property: filter;
 }
 .balanceContainerWrap {
   padding-top: 135px;
