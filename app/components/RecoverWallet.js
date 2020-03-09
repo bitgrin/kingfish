@@ -77,7 +77,6 @@ class RecoverWallet extends Component<Props> {
         let words = [...Array(24).keys()].map((i) => {
             return this.state[`word${i}`];
         })
-        window.ph = words;
         return words.join(' ');
     }
     save_recovery() {
@@ -89,6 +88,7 @@ class RecoverWallet extends Component<Props> {
                 })
             }
             else {
+                // Successfully recovered wallet
                 this.props.setWalletPassword(wallet.encrypt_str(this.state.password));
             }
         });
@@ -106,6 +106,24 @@ class RecoverWallet extends Component<Props> {
             })
         }*/
     }
+    onPaste(i, e) {
+        navigator.clipboard.readText().then((x) => {
+            let parts = x.split(' ');
+            if(parts.length === 24) {
+                e.preventDefault();
+                let words = [];
+                for(var i=0; i<24; i++) {
+                    this.setState({
+                        ...this.state,
+                        [`word${i}`]: parts[i]
+                    })
+                }
+            }
+            else {
+                return;
+            }
+        })
+    }
     render() {
         let content = '';
 
@@ -117,7 +135,7 @@ class RecoverWallet extends Component<Props> {
         })
         // end testing*/
         let recovery_inputs = [...Array(24).keys()].map((i) => {
-            return <FormControl onChange={this.set_recovery_word.bind(this, i)} placeholder={`Word ${i+1}`} className="recovery_input_field" key={i} type="text" label="Text" />;
+            return <FormControl value={this.state[`word${i}`]} onPaste={this.onPaste.bind(this, i)} onChange={this.set_recovery_word.bind(this, i)} placeholder={`Word ${i+1}`} className="recovery_input_field" key={i} type="text" label="Text" />;
         })
         content = (
             <div>
