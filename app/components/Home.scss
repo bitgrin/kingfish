@@ -16,6 +16,54 @@ $seed-word-digit: rgb(161, 148, 120);
 // $error-color: #ff0000;
 // $seed-word-digit: #ccc;
 
+.marginAuto {
+  margin: auto;
+}
+
+.width2em {
+  width: 2em;
+}
+.width15em {
+  width: 15em;
+}
+.width25em {
+  width: 25em;
+}
+
+.topMargin {
+  margin-top: 2em;
+}
+
+.lockScreenWarning {
+  font-size: 1em;
+  color: #bb0000;
+}
+
+.dashedBorderOnHover {
+  border: 1px solid rgba(6,78,167,0);
+}
+.dashedBorderOnHover:hover {
+  border: 1px dashed;
+}
+
+.italicsAppearRedOnHover {
+  i {
+    color: rgba(6,78,167,0);
+  }
+}
+
+.italicsAppearRedOnHover:hover {
+  i {
+    color: red;
+  }
+}
+
+.fixed1emHorizontalMargin {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+}
+
 .passwordPrompt, .passwordPrompt h4 {
   color: #000 !important;
   .red {

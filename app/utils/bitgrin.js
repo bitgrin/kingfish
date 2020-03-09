@@ -35,6 +35,9 @@ const user_home_path = () => {
 const bitgrin_main_path = () => {
     return path.join(user_home_path(), '.bitgrin/main');
 }
+const get_wallet_data_path = () => {
+    return path.join(bitgrin_main_path(), 'bg_wallet_data');
+}
 const get_server_toml_path = () => {
     return path.join(bitgrin_main_path(), 'bitgrin-server.toml');
 }
@@ -68,7 +71,8 @@ const bg_bin_zip_path = `${path.join(bg_bin_directory, `Bitgrin-${bitgrin_versio
 const download_path = () => {
     // let download_path_win = `https://github.com/bitgrin/bitgrin/releases/download/v${bitgrin_version}/BitGrin-Windows-10-64Bit-${bitgrin_version}.zip`;
     let download_path_win = "https://github.com/bitgrin/bitgrin/releases/download/2.0.6/BitGrin-Windows-10-64Bit-2.0.6.zip";
-    let download_path_mac = `https://github.com/bitgrin/bitgrin/releases/download/v${bitgrin_version}/BitGrin-Mac-OS-${bitgrin_version}.zip`;
+    // let download_path_mac = `https://github.com/bitgrin/bitgrin/releases/download/v${bitgrin_version}/BitGrin-Mac-OS-${bitgrin_version}.zip`;
+    let download_path_mac = `https://github.com/bitgrin/bitgrin/releases/download/2.0.6/BitGrin-Mac-OS-2.0.6.zip`;
     let download_path_linux = `https://github.com/bitgrin/bitgrin/releases/download/v${bitgrin_version}/BitGrin-Linux-${bitgrin_version}.zip`;
     if(process.platform.includes('darwin')) {
         console.log(download_path_mac);
@@ -351,6 +355,24 @@ const bitgrin = {
         child_process.on('exit', function (code) {
             console.log(`EXIT WITH CODE: ${code}`);
             process_ended_cb(code);
+        });
+    },
+    wallet_implode: (completed_cb /*  returns (success: , error_msg: )  */) => {
+        let wallet_data_path = get_wallet_data_path();
+        if(!fs.existsSync(wallet_data_path)) {
+            return completed_cb(false, "Wallet does not exist");
+        }
+        const destroy_wallet_data_cmd = `rm -rf ${get_wallet_data_path()}`;
+        let child_process = spawn(destroy_wallet_data_cmd, {shell: true});
+        child_process.on('exit', function (code) {
+            console.log(`EXIT WITH CODE: ${code}`);
+            bitgrin.set_readiness(bitgrin.READY_LEVELS.CREATING_WALLET);
+            if(code === 0) {
+                return completed_cb(true, "");
+            }
+            else {
+                return completed_cb(false, "Error resetting wallet");
+            }
         });
     },
     initiate_file_finalize: (log_callback, process_ended_cb) => {

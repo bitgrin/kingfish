@@ -11,7 +11,7 @@ const wallet_helper = {
     writing_down_recovery_phrase: false,
     set_pass: (t_pass, successCb) => {
         // Check that the password works
-        wallet_helper.password_valid(t_pass, (valid) => {
+        wallet_helper.password_valid(t_pass, (valid, err_logs) => {
             if(valid) {
                 successCb(true);
                 _wallet_password = t_pass;
@@ -23,17 +23,27 @@ const wallet_helper = {
                 bitgrin.set_readiness(bitgrin.READY_LEVELS.READY);
             }
             else {
-                successCb(false);
+                successCb(false, err_logs);
             }
         });
     },
     password_valid: (pass, cb) => {
         let info_str = `${bitgrin.bg_wallet_bin_path} -p="${pass}" info`;
         let child_process = spawn(info_str, {shell: true});
+        let all_logs = "";
+        child_process.stdout.on('data', function (data) {
+            console.log(data.toString());
+            all_logs += data.toString();
+        });
+        child_process.stderr.on('data', function (data) {
+            console.log(data.toString());
+            all_logs += data.toString();
+        });
         child_process.on('exit', function (code) {
+            console.log(all_logs);
             console.log(`EXIT WITH CODE: ${code}`);
             if(code != 0) {
-                cb(false);
+                cb(false, all_logs);
             }
             else {
                 cb(true);
