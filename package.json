@@ -46,6 +46,9 @@
       "app/main.prod.js.map",
       "package.json"
     ],
+    "mac": {
+      "icon": "app/icon.icns"
+    },
     "dmg": {
       "contents": [
         {
@@ -187,7 +190,7 @@
     "css-loader": "^2.1.0",
     "detect-port": "^1.3.0",
     "electron": "^4.0.0",
-    "electron-builder": "^20.38.4",
+    "electron-builder": "^21.2.0",
     "electron-devtools-installer": "^2.2.4",
     "enzyme": "^3.8.0",
     "enzyme-adapter-react-16": "^1.7.1",
