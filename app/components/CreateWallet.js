@@ -161,9 +161,9 @@ class CreateWallet extends Component<Props> {
             <h3>Create Wallet</h3>
             <form onSubmit={this.onFormSubmit.bind(this)}>
                 <ControlLabel>Wallet Password</ControlLabel>
-                <FormControl onChange={this.setWalletPassword.bind(this)} type="password" label="Text" /><br />
+                <FormControl placeholder="Password" onChange={this.setWalletPassword.bind(this)} type="password" label="Text" /><br />
                 <ControlLabel>Confirm Wallet Password</ControlLabel>
-                <FormControl onChange={this.setWalletPassword2.bind(this)} type="password" label="Text" /><br />
+                <FormControl placeholder="Password again" onChange={this.setWalletPassword2.bind(this)} type="password" label="Text" /><br />
                 <FormGroup>
                     <Button onClick={this.create.bind(this)} bsStyle="primary">CREATE</Button>
                     <p className='error smallText'>{this.state.msg || ''}</p>
